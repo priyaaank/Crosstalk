@@ -1,0 +1,10 @@
+bin/
+gen/com/barefoot/crosstalk/R.java
+.project
+.classpath
+.DS_Store
+*.swp
+*.sqlite
+.settings/
+*/**/tags
+*.db
