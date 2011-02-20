@@ -8,3 +8,4 @@ gen/com/barefoot/crosstalk/R.java
 .settings/
 */**/tags
 *.db
+tmp

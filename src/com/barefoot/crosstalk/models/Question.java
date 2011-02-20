@@ -2,14 +2,12 @@ package com.barefoot.crosstalk.models;
 
 import java.util.List;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteCursorDriver;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQuery;
+import com.barefoot.crosstalk.utils.LogUtil;
 
 
 public class Question extends PersistableObject {
+	
+	private final static String LOG_TAG = LogUtil.logTagForMe();
 	
 	private long id;
 	private String questionText;

@@ -14,7 +14,7 @@ public class CrosstalkDatabase extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "CROSSTALK";
 	private final static int DATABASE_VERSION = 1;
 	private final Context context;
-	private final static String LOG_TAG = LogUtil.logTagForMe();;
+	private final static String LOG_TAG = LogUtil.logTagForMe();
 
 	public CrosstalkDatabase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,7 +45,7 @@ public class CrosstalkDatabase extends SQLiteOpenHelper {
 	private void executeManySqlStatements(SQLiteDatabase db, String[] sqlStaements) {
 		for (String eachSqlStatement : sqlStaements) {
 			if(eachSqlStatement.trim().length() > 0) {
-				db.execSQL(eachSqlStatement);
+				db.execSQL(eachSqlStatement.toLowerCase());
 			}
 		}
 	}
