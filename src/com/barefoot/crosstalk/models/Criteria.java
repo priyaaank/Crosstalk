@@ -1,40 +1,47 @@
 package com.barefoot.crosstalk.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Criteria {
+public class Criteria<T extends PersistableObject> {
 	
-	public Criteria() {
-		
+	private Map<String, String> whereOptions = new HashMap<String, String>();
+	private List<String> fromTables = new ArrayList<String>();
+	private List<String> selectFields = new ArrayList<String>();
+	private List<String> ascendingFieldList = new ArrayList<String>();
+	private List<String> descendingFieldList = new ArrayList<String>();
+	
+	public Criteria(T domainObject) {
+		fromTables.add(domainObject.getTableName());
 	}
 	
-	public Criteria select(List<String> fields) {
-		
+	public Criteria<T> select(List<String> fields) {
 		return this;
 	}
 		
-	public Criteria where(String key, String value) {
-		
+	public Criteria<T> where(String key, String value) {
 		return this;
 	}
 	
-	public Criteria where(String key, List<String> value) {
-		
+	public Criteria<T> where(String key, List<String> value) {
 		return this;
 	}
 	
-	public Criteria orderByAscending() {
-	
+	public Criteria<T> orderByAscending() {
 		return this;
 	}
 	
-	public Criteria orderByDescending() {
-		
+	public Criteria<T> orderByDescending() {
 		return this;
 	}
 	
-	public String selectionClauseForQuery() {
-		
+	public String selectionQuery() {
+		return null;
+	}
+	
+	public String countQuery() {
 		return null;
 	}
 }
