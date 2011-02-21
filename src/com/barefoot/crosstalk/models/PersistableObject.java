@@ -81,18 +81,14 @@ public abstract class PersistableObject {
 				for(Field eachField : classDefinition.getDeclaredFields()) {
 					modifiers = eachField.getModifiers();
 					fieldName = eachField.getName();
-					System.out.println(fieldName);
 					fieldSetterName = setterNameFor(fieldName);
 					if(!Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)) {
 						try {
-							System.out.println("HERE!!!" + fieldSetterName);
 							currentMethod = classDefinition.getMethod(fieldSetterName, new Class[] {eachField.getType()});
-							System.out.println("CurrentMethod" + convertedObject);
 							currentMethod.invoke(convertedObject, new Object[]{getDatabaseValue(eachField)});
 						} catch (SecurityException e) {
 							Log.e(LOG_TAG, e.getMessage());
 						} catch (NoSuchMethodException e) {
-							System.out.println("Error2");
 							Log.e(LOG_TAG, e.getMessage());
 						} catch (IllegalArgumentException e) {
 							Log.e(LOG_TAG, e.getMessage());
@@ -116,7 +112,6 @@ public abstract class PersistableObject {
 			String fieldType = field.getType().getName();
 			String fieldName = field.getName();
 			int dbValueIndex = getColumnIndexOrThrow(fieldName.toLowerCase());
-			System.out.println(dbValueIndex);
 			if("java.lang.String".equals(fieldType)) {
 				return getString(dbValueIndex);
 			} else if("int".equals(fieldType)) {

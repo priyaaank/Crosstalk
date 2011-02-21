@@ -3,15 +3,18 @@ package com.barefoot.crosstalk.models;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import android.app.Application;
 import android.content.Context;
@@ -62,18 +65,24 @@ public class QuestionTest {
 		testQuestion.setQuestionTitle("This is a test title for the question");
 		
 		SQLiteCursor newCursor = (SQLiteCursor) testQuestion.getCursorFactory().newCursor(null, null, null, null);
-		ShadowSQLiteCursor shadowCursor = (ShadowSQLiteCursor) Robolectric.shadowOf(newCursor); 
+		ShadowSQLiteCursor shadowCursor = (ShadowSQLiteCursor) Robolectric.shadowOf(newCursor);
 		ResultSet mockResultSet = mock(ResultSet.class);
+		ResultSetMetaData mockMetaResultSet = mock(ResultSetMetaData.class);
 		try {
-			when(mockResultSet.getString("questiontext")).thenReturn("Hoola");
+			when(mockMetaResultSet.getColumnCount()).thenReturn(4);
+			when(mockMetaResultSet.getColumnName(0)).thenReturn("id");
+			when(mockMetaResultSet.getColumnName(1)).thenReturn("questiontext");
+			when(mockMetaResultSet.getColumnName(2)).thenReturn("questiontitle");
+			when(mockMetaResultSet.getColumnName(3)).thenReturn("askeddate");
+			when(mockResultSet.getMetaData()).thenReturn(mockMetaResultSet);
 		} catch (SQLException e) {
 			fail();
 		}
+
 		shadowCursor.setResultSet(mockResultSet);
-		
 		Question modelObject = (Question)((PersistableObjectCursor)newCursor).getModelObject(testQuestion);
+		
 		assertNotNull(modelObject);
-		System.out.println(modelObject.getQuestionText());
 	}
 	
 }
