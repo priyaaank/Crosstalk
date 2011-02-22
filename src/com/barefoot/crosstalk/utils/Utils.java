@@ -15,4 +15,19 @@ public class Utils {
 		return null;
 	}
 
+	public static String getCommaSeparatedStringForAllElements(List<String> list, boolean includeQuotes) {
+		String commaSymbol =  includeQuotes ? "'" : "";
+		if(list != null && list.size() > 0) {
+			StringBuffer commaSeparatedList = new StringBuffer();
+			for(String eachElement : list) {
+				commaSeparatedList.append(commaSymbol)
+								  .append(eachElement)
+								  .append(commaSymbol)
+								  .append(", ");
+			}
+			return commaSeparatedList.substring(0,commaSeparatedList.length() - 2);
+		}
+		
+		return "";
+	}
 }

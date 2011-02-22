@@ -21,7 +21,7 @@ import com.barefoot.crosstalk.utils.LogUtil;
 public abstract class PersistableObject {
 	
 	public String getTableName() {
-		return this.getClass().getName().toUpperCase();
+		return this.getClass().getSimpleName().toLowerCase();
 	}
 	
 	public PersistableObject findById(int id) {
