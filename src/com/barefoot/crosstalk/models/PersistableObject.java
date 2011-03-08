@@ -1,7 +1,12 @@
 package com.barefoot.crosstalk.models;
 
-import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
-import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
+import android.database.sqlite.SQLiteCursorDriver;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQuery;
+import android.util.Log;
+import com.barefoot.crosstalk.utils.LogUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,14 +14,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteCursorDriver;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQuery;
-import android.util.Log;
-
-import com.barefoot.crosstalk.utils.LogUtil;
+import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
+import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
 
 public abstract class PersistableObject {
 	

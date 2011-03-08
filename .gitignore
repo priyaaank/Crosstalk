@@ -9,3 +9,5 @@ gen/com/barefoot/crosstalk/R.java
 */**/tags
 *.db
 tmp
+.idea/
+Crosstalk.iml
