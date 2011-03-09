@@ -112,16 +112,23 @@ public class Criteria<T extends PersistableObject> {
 	
 	public Map<String, String[]> selectionQueryWithParams() {
 		Map<String, String[]> whereOptionsMap = new HashMap<String, String[]>();
+		ArrayList<String> values = new ArrayList<String>();
+		StringBuffer paramsRepresentationWithQuestionMarks = new StringBuffer("");
         if(whereOptions.size() > 0) {
 			StringBuffer whereClause = new StringBuffer("where ");
 			for(String fieldName : whereOptions.keySet()) {
 				if(whereOptions.get(fieldName).size() > 1) {
-					whereClause.append(fieldName +" in ("+ Utils.getCommaSeparatedStringForAllElements(whereOptions.get(fieldName), false) +") and ");
+					for (String paramVal : whereOptions.get(fieldName)) {
+						values.add(paramVal);
+						paramsRepresentationWithQuestionMarks.append("?,");
+					}
+					whereClause.append(fieldName +" in ("+ paramsRepresentationWithQuestionMarks.substring(0, paramsRepresentationWithQuestionMarks.length() - 1) +") and ");
 				} else {
+					values.add(whereOptions.get(fieldName).get(0));
 					whereClause.append(fieldName +" = ? and ");
 				}
 			}
-            whereOptionsMap.put((whereClause.substring(0, whereClause.length() - 5).toString()), (String[])whereOptions.values().toArray());
+            whereOptionsMap.put(whereClause.substring(0, whereClause.length() - 5).toString(), values.toArray(new String[values.size()]));
 		}
 
         return whereOptionsMap;
