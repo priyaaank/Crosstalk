@@ -1,23 +1,29 @@
 package com.barefoot.crosstalk.models;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteCursorDriver;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQuery;
-import android.util.Log;
-import com.barefoot.crosstalk.utils.LogUtil;
+import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
+import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
-import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteCursor;
+import android.database.sqlite.SQLiteCursorDriver;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQuery;
+import android.util.Log;
+
+import com.barefoot.crosstalk.utils.LogUtil;
 
 public abstract class PersistableObject {
+	
+	private final String LOG_TAG = LogUtil.logTagForMe();
 	
 	public String getTableName() {
 		return this.getClass().getSimpleName().toLowerCase();
@@ -28,8 +34,6 @@ public abstract class PersistableObject {
 		List<PersistableObject> listOfObjects = findAllForGiven(searchCriteria);
 		return isNotNullAndEmpty(listOfObjects) ? listOfObjects.get(0) : null; 
 	}
-	
-	public abstract List<PersistableObject> findAllFor(Criteria<PersistableObject> sqlCriteria);
 	
 	public abstract boolean exists(Criteria<PersistableObject> sqlCriteria);
 	
@@ -42,8 +46,29 @@ public abstract class PersistableObject {
 	public abstract Criteria<PersistableObject> getCriteriaInstance();
 	
 	protected List<PersistableObject> findAllForGiven(Criteria<PersistableObject> criteria) {
+		Cursor persistableObjectReview = null;
+		List<PersistableObject> objectList = new ArrayList<PersistableObject>();
 		
-		return null;
+		try {
+			persistableObjectReview = getDatabase().getReadableDatabase().rawQueryWithFactory(getCursorFactory(), 
+																							  criteria.escapedSelectionQuery(), 
+																							  criteria.selectionQueryParamsArray(), 
+																							  null);
+			if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
+				do {
+					objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(this));
+				} while(persistableObjectReview.moveToNext());
+			}
+			
+		} catch(SQLException sqle) {
+			Log.e(LOG_TAG, "SQL exception thrown:" + sqle.getMessage());
+		} finally {
+			if(persistableObjectReview != null && !persistableObjectReview.isClosed()) {
+				persistableObjectReview.close();
+			}
+		}
+		
+		return objectList;
 	}
 
 	public static PersistableObjectCursor.Factory getCursorFactory() {
@@ -128,4 +153,6 @@ public abstract class PersistableObject {
 			return null;
 		}
 	}
+	
+	abstract protected SQLiteOpenHelper getDatabase();
 }

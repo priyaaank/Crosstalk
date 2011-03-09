@@ -110,30 +110,47 @@ public class Criteria<T extends PersistableObject> {
 		return query.toString();
 	}
 	
-	public Map<String, String[]> selectionQueryWithParams() {
-		Map<String, String[]> whereOptionsMap = new HashMap<String, String[]>();
+	public String[] selectionQueryParamsArray() {
+		if (whereOptions == null || whereOptions.size() == 0)
+			return null;
+		
 		ArrayList<String> values = new ArrayList<String>();
-		StringBuffer paramsRepresentationWithQuestionMarks = new StringBuffer("");
         if(whereOptions.size() > 0) {
-			StringBuffer whereClause = new StringBuffer("where ");
 			for(String fieldName : whereOptions.keySet()) {
 				if(whereOptions.get(fieldName).size() > 1) {
 					for (String paramVal : whereOptions.get(fieldName)) {
 						values.add(paramVal);
+					}
+				} else {
+					values.add(whereOptions.get(fieldName).get(0));
+				}
+			}
+		}
+        return values.toArray(new String[values.size()]);
+	}
+	
+	public String escapedSelectionQuery() {
+		if(whereOptions == null || whereOptions.size() == 0)
+			return null;
+		
+		StringBuffer paramsRepresentationWithQuestionMarks = new StringBuffer("");
+		StringBuffer whereClause = new StringBuffer("where ");
+        if(whereOptions.size() > 0) {
+			for(String fieldName : whereOptions.keySet()) {
+				if(whereOptions.get(fieldName).size() > 1) {
+					for (int i=0; i < whereOptions.get(fieldName).size(); i++) {
 						paramsRepresentationWithQuestionMarks.append("?,");
 					}
 					whereClause.append(fieldName +" in ("+ paramsRepresentationWithQuestionMarks.substring(0, paramsRepresentationWithQuestionMarks.length() - 1) +") and ");
 				} else {
-					values.add(whereOptions.get(fieldName).get(0));
 					whereClause.append(fieldName +" = ? and ");
 				}
 			}
-            whereOptionsMap.put(whereClause.substring(0, whereClause.length() - 5).toString(), values.toArray(new String[values.size()]));
 		}
 
-        return whereOptionsMap;
+        return whereClause.substring(0, whereClause.length() - 5).toString();		
 	}
-	
+		
 	protected String getOrderClause() {
 		if(orderByFields.size() > 0) {
 			StringBuffer orderClause = new StringBuffer("order by ");

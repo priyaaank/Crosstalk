@@ -1,6 +1,6 @@
 package com.barefoot.crosstalk.models;
 
-import java.util.List;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.barefoot.crosstalk.utils.LogUtil;
 
@@ -65,14 +65,14 @@ public class Question extends PersistableObject {
 	public void delete(PersistableObject persistableObject) {
 		
 	}
-	
+
 	@Override
-	public List<PersistableObject> findAllFor(Criteria<PersistableObject> sqlCriteria) {
+	public Criteria<PersistableObject> getCriteriaInstance() {
 		return null;
 	}
 
 	@Override
-	public Criteria<PersistableObject> getCriteriaInstance() {
+	protected SQLiteOpenHelper getDatabase() {
 		return null;
 	}
 }

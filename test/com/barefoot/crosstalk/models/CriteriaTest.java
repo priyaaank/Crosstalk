@@ -1,14 +1,9 @@
 package com.barefoot.crosstalk.models;
 
-import java.util.Map;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import com.barefoot.crosstalk.models.Criteria;
-import com.barefoot.crosstalk.models.Question;
 
 public class CriteriaTest {
 	
@@ -57,12 +52,13 @@ public class CriteriaTest {
 					.orderByAscending("questiontext","questiontitle")
 					.orderByDescending("askeddate");
 		
-		Map<String, String[]> selectionQueryWithParams = testCriteria.selectionQueryWithParams();
-		Assert.assertEquals(params[0], selectionQueryWithParams.get(SELECTION_QUERY.toString())[0]);
-		Assert.assertEquals(params[1], selectionQueryWithParams.get(SELECTION_QUERY.toString())[1]);
-		Assert.assertEquals(params[2], selectionQueryWithParams.get(SELECTION_QUERY.toString())[2]);
-		Assert.assertEquals(params[3], selectionQueryWithParams.get(SELECTION_QUERY.toString())[3]);		
-		Assert.assertEquals(params[4], selectionQueryWithParams.get(SELECTION_QUERY.toString())[4]);
+		Assert.assertEquals(SELECTION_QUERY.toString(), testCriteria.escapedSelectionQuery());
+		
+		Assert.assertEquals(params[0], testCriteria.selectionQueryParamsArray()[0]);
+		Assert.assertEquals(params[1], testCriteria.selectionQueryParamsArray()[1]);
+		Assert.assertEquals(params[2], testCriteria.selectionQueryParamsArray()[2]);
+		Assert.assertEquals(params[3], testCriteria.selectionQueryParamsArray()[3]);		
+		Assert.assertEquals(params[4], testCriteria.selectionQueryParamsArray()[4]);
 	}
 
 }
