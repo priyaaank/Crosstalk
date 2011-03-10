@@ -9,8 +9,15 @@ public class Utils {
 	}
 	
 	public static String setterNameFor(String attributeName) {
+		String[] splittedName = null;
+		StringBuffer setterName = new StringBuffer("set");
 		if (null != attributeName) {
-			return "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1, attributeName.length());
+			splittedName = attributeName.split("_");
+			for(String eachWord : splittedName) {
+				setterName.append(capitalizeFirstLetter(eachWord));
+			}
+			
+ 			return setterName.toString();
 		}
 		return null;
 	}
@@ -29,5 +36,9 @@ public class Utils {
 		}
 		
 		return "";
+	}
+	
+	private static String capitalizeFirstLetter(String word) {
+		return word.substring(0, 1).toUpperCase() + word.substring(1, word.length());
 	}
 }

@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -34,9 +32,9 @@ public class QuestionTest {
 	
 	@Before
 	public void setup() {
-		testQuestion = new Question();
 		testApplication = Robolectric.application;
 		applicationContext = testApplication.getApplicationContext();
+		testQuestion = new Question(applicationContext);
 	}
 	
 	@Test

@@ -61,33 +61,22 @@ public class Question extends PersistableObject {
 	}
 
 	@Override
-	public boolean exists(Criteria<PersistableObject> sqlCriteria) {
-		return false;
-	}
-
-	@Override
-	public void create(PersistableObject persistableObject) {
+	public void create() {
 		
 	}
 
 	@Override
-	public void update(PersistableObject persistableObject) {
+	public void update() {
 		
 	}
 
 	@Override
-	public void delete(PersistableObject persistableObject) {
+	public void delete() {
 		
-	}
-
-	@Override
-	public Criteria<PersistableObject> getCriteriaInstance() {
-		return null;
 	}
 
 	@Override
 	protected Context getContext() {
 		return this.context;
 	}
-
 }

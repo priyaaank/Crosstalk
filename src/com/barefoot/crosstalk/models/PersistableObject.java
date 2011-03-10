@@ -35,15 +35,19 @@ public abstract class PersistableObject {
 		return isNotNullAndEmpty(listOfObjects) ? listOfObjects.get(0) : null; 
 	}
 	
-	public abstract boolean exists(Criteria<PersistableObject> sqlCriteria);
+	public boolean exists(Criteria<PersistableObject> sqlCriteria) {
+		return false;
+	}
 	
-	public abstract void create(PersistableObject persistableObject);
+	public abstract void create();
 	
-	public abstract void update(PersistableObject persistableObject);
+	public abstract void update();
 	
-	public abstract void delete(PersistableObject persistableObject);
+	public abstract void delete();
 	
-	public abstract Criteria<PersistableObject> getCriteriaInstance();
+	protected Criteria<PersistableObject> getCriteriaInstance() {
+		return new Criteria<PersistableObject>(this);
+	}
 	
 	protected List<PersistableObject> findAllForGiven(Criteria<PersistableObject> criteria) {
 		Cursor persistableObjectReview = null;

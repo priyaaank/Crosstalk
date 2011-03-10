@@ -12,7 +12,7 @@ public class CriteriaTest {
 	
 	@Before
 	public void setup() {
-		testQuestionObject = new Question();
+		testQuestionObject = new Question(null);
 		testCriteria = new Criteria<Question>(testQuestionObject);
 	}
 	
