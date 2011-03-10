@@ -10,12 +10,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
@@ -50,10 +50,10 @@ public abstract class PersistableObject {
 		List<PersistableObject> objectList = new ArrayList<PersistableObject>();
 		
 		try {
-			persistableObjectReview = getDatabase().getReadableDatabase().rawQueryWithFactory(getCursorFactory(), 
-																							  criteria.escapedSelectionQuery(), 
-																							  criteria.selectionQueryParamsArray(), 
-																							  null);
+			persistableObjectReview = new CrosstalkDatabase(getContext()).getReadableDatabase().rawQueryWithFactory(getCursorFactory(), 
+																							  						criteria.escapedSelectionQuery(), 
+																							  						criteria.selectionQueryParamsArray(), 
+																							  						null);
 			if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
 				do {
 					objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(this));
@@ -154,5 +154,5 @@ public abstract class PersistableObject {
 		}
 	}
 	
-	abstract protected SQLiteOpenHelper getDatabase();
+	abstract protected Context getContext();
 }

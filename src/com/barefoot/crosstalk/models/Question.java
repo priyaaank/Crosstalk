@@ -1,6 +1,6 @@
 package com.barefoot.crosstalk.models;
 
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.Context;
 
 import com.barefoot.crosstalk.utils.LogUtil;
 
@@ -13,6 +13,20 @@ public class Question extends PersistableObject {
 	private String questionText;
 	private String questionTitle;
 	private String askedDate;
+
+	private Context context;
+	
+	public Question(Context context) {
+		this.context = context;
+	}
+	
+	public Question(Context context, long id, String questionText, String questionTitle, String askedDate) {
+		this.context = context;
+		this.id = id;
+		this.questionText = questionText;
+		this.questionTitle = questionTitle;
+		this.askedDate = askedDate;
+	}
 	
 	public long getId() {
 		return id;
@@ -72,7 +86,8 @@ public class Question extends PersistableObject {
 	}
 
 	@Override
-	protected SQLiteOpenHelper getDatabase() {
-		return null;
+	protected Context getContext() {
+		return this.context;
 	}
+
 }
