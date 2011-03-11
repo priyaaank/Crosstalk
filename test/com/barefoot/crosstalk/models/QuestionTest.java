@@ -69,16 +69,16 @@ public class QuestionTest {
 		try {
 			when(mockMetaResultSet.getColumnCount()).thenReturn(4);
 			when(mockMetaResultSet.getColumnName(0)).thenReturn("id");
-			when(mockMetaResultSet.getColumnName(1)).thenReturn("questiontext");
-			when(mockMetaResultSet.getColumnName(2)).thenReturn("questiontitle");
-			when(mockMetaResultSet.getColumnName(3)).thenReturn("askeddate");
+			when(mockMetaResultSet.getColumnName(1)).thenReturn("question_text");
+			when(mockMetaResultSet.getColumnName(2)).thenReturn("question_title");
+			when(mockMetaResultSet.getColumnName(3)).thenReturn("asked_date");
 			when(mockResultSet.getMetaData()).thenReturn(mockMetaResultSet);
 		} catch (SQLException e) {
 			fail();
 		}
 
 		shadowCursor.setResultSet(mockResultSet);
-		Question modelObject = (Question)((PersistableObjectCursor)newCursor).getModelObject(testQuestion);
+		Question modelObject = (Question)((PersistableObjectCursor)newCursor).getModelObject(testQuestion, null);
 		
 		assertNotNull(modelObject);
 	}

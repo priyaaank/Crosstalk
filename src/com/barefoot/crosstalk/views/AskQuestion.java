@@ -8,9 +8,10 @@ import android.view.View.OnClickListener;
 
 import com.barefoot.crosstalk.R;
 import com.barefoot.crosstalk.models.Question;
-import com.barefoot.crosstalk.utils.LogUtil;
 
 public class AskQuestion extends Activity {
+	
+	public static String LOG_TAG = AskQuestion.class.getName();
 	
 	@Override
 	public void onCreate(Bundle savedInstance) {
@@ -20,7 +21,9 @@ public class AskQuestion extends Activity {
 		setComponentListeners();
 		
         Question question = (Question) new Question(this).findById(1);
-        Log.i(LogUtil.logTagForMe(), "Found question is!!!! :  " + question);
+        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getAskedDate());
+        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getQuestionText());
+        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getQuestionTitle());
 
 	}
 	

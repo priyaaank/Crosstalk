@@ -29,5 +29,12 @@ public class UtilsTest {
 		Assert.assertEquals(expectedNameStringWithQuotes, Utils.getCommaSeparatedStringForAllElements(listOfNames , true));
 		Assert.assertEquals(expectedNameStringWithoutQuotes, Utils.getCommaSeparatedStringForAllElements(listOfNames , false));
 	}
+	
+	@Test
+	public void testCamelCaseToSnakeCaseConversion() {
+		Assert.assertEquals("some_wierd_name", Utils.camelCaseToSnakeCase("someWierdName"));
+		Assert.assertEquals("wierd", Utils.camelCaseToSnakeCase("wierd"));
+		Assert.assertNull(Utils.camelCaseToSnakeCase(null));
+	}
 
 }

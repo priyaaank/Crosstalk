@@ -1,6 +1,7 @@
 package com.barefoot.crosstalk.models;
 
 import static com.barefoot.crosstalk.utils.Utils.basicPluralize;
+import static com.barefoot.crosstalk.utils.Utils.camelCaseToSnakeCase;
 import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
 import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
 
@@ -20,11 +21,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
-import com.barefoot.crosstalk.utils.LogUtil;
-
 public abstract class PersistableObject {
 	
-	private final String LOG_TAG = LogUtil.logTagForMe();
+	private final String LOG_TAG = PersistableObject.class.getName();
 	
 	public String getTableName() {
 		return basicPluralize(this.getClass().getSimpleName().toLowerCase());
@@ -61,7 +60,7 @@ public abstract class PersistableObject {
 																							  						null);
 			if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
 				do {
-					objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(this));
+					objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(this, getContext()));
 				} while(persistableObjectReview.moveToNext());
 			}
 			
@@ -82,7 +81,7 @@ public abstract class PersistableObject {
 	
 	public static class PersistableObjectCursor extends SQLiteCursor {
 		
-		private final String LOG_TAG = LogUtil.logTagForMe();
+		private final String LOG_TAG = PersistableObjectCursor.class.getName();
 		
 		public PersistableObjectCursor(SQLiteDatabase db, SQLiteCursorDriver driver, 
 							  		   String editTable, SQLiteQuery query) {
@@ -98,11 +97,14 @@ public abstract class PersistableObject {
 			}
 		}
 		
-		public PersistableObject getModelObject(PersistableObject subClassObject) {
+		public PersistableObject getModelObject(PersistableObject subClassObject, Context context) {
 			PersistableObject convertedObject = null;
 			try {
 				Class classDefinition = Class.forName(subClassObject.getClass().getName());
-				convertedObject = (PersistableObject) classDefinition.newInstance();
+				
+				Object[] constructorArgs = new Object[] { context };
+				Class[] argsClass = new Class[] {Context.class};
+				convertedObject = (PersistableObject) classDefinition.getConstructor(argsClass).newInstance(constructorArgs);
 				int modifiers;
 				String fieldName;
 				String fieldSetterName;
@@ -128,9 +130,17 @@ public abstract class PersistableObject {
 				}
 			} catch (ClassNotFoundException e) {
 				Log.e(LOG_TAG, e.getMessage());
+			} catch (NoSuchMethodException e) {
+				Log.e(LOG_TAG, e.getMessage());
 			} catch (IllegalAccessException e) {
 				Log.e(LOG_TAG, e.getMessage());
 			} catch (InstantiationException e) {
+				Log.e(LOG_TAG, e.getMessage());
+			} catch (IllegalArgumentException e) {
+				Log.e(LOG_TAG, e.getMessage());
+			} catch (SecurityException e) {
+				Log.e(LOG_TAG, e.getMessage());
+			} catch (InvocationTargetException e) {
 				Log.e(LOG_TAG, e.getMessage());
 			}
 			
@@ -140,7 +150,7 @@ public abstract class PersistableObject {
 		private Object getDatabaseValue(Field field) {
 			String fieldType = field.getType().getName();
 			String fieldName = field.getName();
-			int dbValueIndex = getColumnIndexOrThrow(fieldName.toLowerCase());
+			int dbValueIndex = getColumnIndexOrThrow(camelCaseToSnakeCase(fieldName));
 			if("java.lang.String".equals(fieldType)) {
 				return getString(dbValueIndex);
 			} else if("int".equals(fieldType)) {

@@ -25,6 +25,22 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static String camelCaseToSnakeCase(String word) {
+		if (word == null)
+			return null;
+		
+		StringBuffer snakeCaseWord = new StringBuffer("");
+		String currentChar = null;
+		for(int i=1; i <= word.length(); i++) {
+			currentChar = word.substring(i-1, i);
+			if(currentChar.equals(currentChar.toUpperCase())) {
+				snakeCaseWord.append("_");
+			}
+			snakeCaseWord.append(currentChar.toLowerCase());
+		}
+		return snakeCaseWord.toString();
+	}
 
 	public static String getCommaSeparatedStringForAllElements(List<String> list, boolean includeQuotes) {
 		String commaSymbol =  includeQuotes ? "'" : "";

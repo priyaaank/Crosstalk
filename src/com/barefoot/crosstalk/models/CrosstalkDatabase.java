@@ -7,14 +7,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.barefoot.crosstalk.R;
-import com.barefoot.crosstalk.utils.LogUtil;
 
 public class CrosstalkDatabase extends SQLiteOpenHelper {
 	
 	private static final String DATABASE_NAME = "CROSSTALK";
 	private final static int DATABASE_VERSION = 1;
 	private final Context context;
-	private final static String LOG_TAG = LogUtil.logTagForMe();
+	private final static String LOG_TAG = CrosstalkDatabase.class.getName();
 
 	public CrosstalkDatabase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

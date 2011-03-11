@@ -2,12 +2,10 @@ package com.barefoot.crosstalk.models;
 
 import android.content.Context;
 
-import com.barefoot.crosstalk.utils.LogUtil;
-
 
 public class Question extends PersistableObject {
 	
-	private final static String LOG_TAG = LogUtil.logTagForMe();
+	private final static String LOG_TAG = Question.class.getName();
 	
 	private long id;
 	private String questionText;
@@ -15,6 +13,10 @@ public class Question extends PersistableObject {
 	private String askedDate;
 
 	private Context context;
+	
+	public Question() {
+		//Do nothing
+	}
 	
 	public Question(Context context) {
 		this.context = context;
