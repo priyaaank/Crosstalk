@@ -2,12 +2,10 @@ package com.barefoot.crosstalk.views;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.barefoot.crosstalk.R;
-import com.barefoot.crosstalk.models.Question;
 
 public class AskQuestion extends Activity {
 	
@@ -19,11 +17,6 @@ public class AskQuestion extends Activity {
 		
 		setContentView(R.layout.ask_question);
 		setComponentListeners();
-		
-        Question question = (Question) new Question(this).findById(1);
-        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getAskedDate());
-        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getQuestionText());
-        Log.i(LOG_TAG, "Found question is!!!! :  " + question.getQuestionTitle());
 
 	}
 	

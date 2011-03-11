@@ -100,10 +100,10 @@ public abstract class PersistableObject {
 		public PersistableObject getModelObject(PersistableObject subClassObject, Context context) {
 			PersistableObject convertedObject = null;
 			try {
-				Class classDefinition = Class.forName(subClassObject.getClass().getName());
+				Class<?> classDefinition = Class.forName(subClassObject.getClass().getName());
 				
 				Object[] constructorArgs = new Object[] { context };
-				Class[] argsClass = new Class[] {Context.class};
+				Class<?>[] argsClass = new Class[] {Context.class};
 				convertedObject = (PersistableObject) classDefinition.getConstructor(argsClass).newInstance(constructorArgs);
 				int modifiers;
 				String fieldName;

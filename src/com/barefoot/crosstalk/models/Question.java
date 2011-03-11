@@ -5,18 +5,12 @@ import android.content.Context;
 
 public class Question extends PersistableObject {
 	
-	private final static String LOG_TAG = Question.class.getName();
-	
 	private long id;
 	private String questionText;
 	private String questionTitle;
 	private String askedDate;
 
 	private Context context;
-	
-	public Question() {
-		//Do nothing
-	}
 	
 	public Question(Context context) {
 		this.context = context;

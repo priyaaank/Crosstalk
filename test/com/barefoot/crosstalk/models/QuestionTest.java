@@ -50,11 +50,13 @@ public class QuestionTest {
 		
 	}
 	
+	@SuppressWarnings("static-access")
 	@Test
 	public void testThatQuestionCursorFactoryIsNotNull() {
 		assertNotNull(testQuestion.getCursorFactory());
 	}
 	
+	@SuppressWarnings("static-access")
 	@Test
 	public void testThatQuestionCursorIsNotNull() {
 		testQuestion.setAskedDate("some random date");
