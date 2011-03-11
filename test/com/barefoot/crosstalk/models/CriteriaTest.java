@@ -36,6 +36,17 @@ public class CriteriaTest {
 	}
 	
 	@Test
+	public void testGenerationOfBasicSelectQuery() {
+		final StringBuffer SELECTION_QUERY = new StringBuffer();
+		SELECTION_QUERY.append("select *  from question t0 where ")
+					   .append("id = '1'  ");
+		
+		testCriteria.where("id", "1");
+		
+		Assert.assertEquals(SELECTION_QUERY.toString().toLowerCase(), testCriteria.selectionQuery().toLowerCase());
+	}
+	
+	@Test
 	public void testGenerationOfSelectQueryWithParamsArray() {
 		final StringBuffer SELECTION_QUERY = new StringBuffer();
 		SELECTION_QUERY.append("where ")

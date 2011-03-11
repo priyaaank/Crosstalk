@@ -8,6 +8,10 @@ public class Utils {
 		return (listOfObjects != null & listOfObjects.size() > 0);
 	}
 	
+	public static String basicPluralize(String singularWord) {
+		return singularWord == null ? null : (singularWord.trim() + "s");
+	}
+	
 	public static String setterNameFor(String attributeName) {
 		String[] splittedName = null;
 		StringBuffer setterName = new StringBuffer("set");

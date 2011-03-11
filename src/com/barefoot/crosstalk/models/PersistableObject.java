@@ -1,5 +1,6 @@
 package com.barefoot.crosstalk.models;
 
+import static com.barefoot.crosstalk.utils.Utils.basicPluralize;
 import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
 import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
 
@@ -26,7 +27,7 @@ public abstract class PersistableObject {
 	private final String LOG_TAG = LogUtil.logTagForMe();
 	
 	public String getTableName() {
-		return this.getClass().getSimpleName().toLowerCase();
+		return basicPluralize(this.getClass().getSimpleName().toLowerCase());
 	}
 	
 	public PersistableObject findById(int id) {

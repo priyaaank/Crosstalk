@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.util.Log;
+
+import com.barefoot.crosstalk.utils.LogUtil;
 import com.barefoot.crosstalk.utils.Utils;
 
 public class Criteria<T extends PersistableObject> {
@@ -133,6 +136,8 @@ public class Criteria<T extends PersistableObject> {
 		if(whereOptions == null || whereOptions.size() == 0)
 			return null;
 		
+		StringBuffer query = new StringBuffer(getSelect()).append(" ");
+		query.append(getFromClause()).append(" ");
 		StringBuffer paramsRepresentationWithQuestionMarks = new StringBuffer("");
 		StringBuffer whereClause = new StringBuffer("where ");
         if(whereOptions.size() > 0) {
@@ -147,8 +152,10 @@ public class Criteria<T extends PersistableObject> {
 				}
 			}
 		}
-
-        return whereClause.substring(0, whereClause.length() - 5).toString();		
+        query.append(whereClause.substring(0, whereClause.length() - 5).toString()).append(" ");
+		query.append(getOrderClause()).append(" ");
+		Log.i(LogUtil.logTagForMe(), query.toString());
+        return query.toString();		
 	}
 		
 	protected String getOrderClause() {
@@ -200,7 +207,7 @@ public class Criteria<T extends PersistableObject> {
 			}
 			return selectElements.substring(0, selectElements.length() - 2);
 		}
-		return " * ";
+		return "select * ";
 	}
 	
 	private void raiseErrorIfSelectFieldsAlreadySpecified() {
