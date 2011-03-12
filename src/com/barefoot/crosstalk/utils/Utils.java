@@ -20,6 +20,14 @@ public class Utils {
 		return null;
 	}
 	
+	public static String getterNameFor(String attributeName) {
+		StringBuffer setterName = new StringBuffer("get");
+		if (null != attributeName) {
+			return setterName.append(snakeCaseToCamelCase(attributeName)).toString();
+		}
+		return null;
+	}
+	
 	public static String snakeCaseToCamelCase(String word) {
 		if (word == null)
 			return null;

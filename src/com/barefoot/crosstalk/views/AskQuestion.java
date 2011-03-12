@@ -2,7 +2,6 @@ package com.barefoot.crosstalk.views;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -20,8 +19,8 @@ public class AskQuestion extends Activity {
 		setContentView(R.layout.ask_question);
 		setComponentListeners();
 		
-		Question object = (Question)new Question(this).findById(1);
-		Log.i(LOG_TAG, "FOUND QUESTION WITH ID"+ object.getId() +" AND TEXT" + object.getQuestionText());
+		new Question(this, "wooo hooo","whatebr you need man!!", "23/3/2222").create();
+//		Log.i(LOG_TAG, "FOUND QUESTION WITH ID"+ object.getId() +" AND TEXT" + object.getQuestionText());
 		
 
 	}

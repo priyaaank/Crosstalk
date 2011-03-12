@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="create_database_sqls">
-    	CREATE TABLE QUESTIONS (ID INTEGER, QUESTION_TEXT TEXT, QUESTION_TITLE STRING, ASKED_DATE STRING);
+    	CREATE TABLE QUESTIONS (ID INTEGER PRIMARY KEY, QUESTION_TEXT TEXT, QUESTION_TITLE STRING, ASKED_DATE STRING);
     </string>
 </resources>

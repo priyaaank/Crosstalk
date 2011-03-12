@@ -4,6 +4,7 @@ import static com.barefoot.crosstalk.utils.Utils.basicPluralize;
 import static com.barefoot.crosstalk.utils.Utils.camelCaseToSnakeCase;
 import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
 import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
+import static com.barefoot.crosstalk.utils.Utils.getterNameFor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -22,6 +24,18 @@ import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
 public abstract class PersistableObject {
+	
+	final static List<Class<?>> returnTypes = new ArrayList<Class<?>>(); 
+
+	static {
+		returnTypes.add(long.class);
+		returnTypes.add(int.class);
+		returnTypes.add(double.class);
+		returnTypes.add(float.class);
+		returnTypes.add(String.class);
+		returnTypes.add(boolean.class);
+		returnTypes.add(char.class);
+	}
 	
 	private final String LOG_TAG = PersistableObject.class.getName();
 	
@@ -40,9 +54,28 @@ public abstract class PersistableObject {
 	}
 	
 	public long create() {
+		List<String> fieldNamesForObject = getFieldNamesForObject();
+		final ContentValues dbValues = getContentValuesForCurrentObject(fieldNamesForObject);
+		
+		(new QueryExecutor(getContext()) {
+			@Override
+			public void databaseOperation() {
+				getDatabase().getWritableDatabase().beginTransaction();
+				try {
+					long id = getDatabase().getWritableDatabase().insertOrThrow(getTableName(),getNullableColumnName(), dbValues);
+					PersistableObject.this.setPrimaryKeyColumn(id);
+					getDatabase().getWritableDatabase().setTransactionSuccessful();
+				} catch(SQLException sqle) {
+					Log.e(LOG_TAG, sqle.getMessage());
+				} finally {
+					getDatabase().getWritableDatabase().endTransaction();
+				}
+			}
+		}).execute();
+		
 		return 0;
 	}
-	
+
 	public long update() {
 		return 0;
 	}
@@ -186,7 +219,41 @@ public abstract class PersistableObject {
 		
 		return columnNames;
 	}
+
+
+	protected ContentValues getContentValuesForCurrentObject(List<String> fieldNames) {
+		Class<?> classDefinition = null;
+		Method currentMethod = null;
+		String value = null;
+		ContentValues contentValues = new ContentValues();
+		
+		for(String fieldName : fieldNames) {
+			try {
+				if(fieldName.equalsIgnoreCase(getPrimaryKeyColumnName()))
+					continue;
+				
+				classDefinition = Class.forName(this.getClass().getName());
+				currentMethod = classDefinition.getMethod(getterNameFor(fieldName), null);
+				
+				if(!(returnTypes.contains(currentMethod.getReturnType())))
+					continue;
+						
+				value = String.valueOf(currentMethod.invoke(this, null));
+				contentValues.put(fieldName, value);
+			} catch (Exception e) {
+				Log.e(LOG_TAG, e.getMessage());
+			}
+		}
+		
+		return contentValues;
+	}
 	
 	abstract protected Context getContext();
+	
+	abstract protected void setPrimaryKeyColumn(long id);
+	
+	abstract protected String getNullableColumnName();
+	
+	abstract protected String getPrimaryKeyColumnName();
 
 }

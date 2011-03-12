@@ -16,9 +16,8 @@ public class Question extends PersistableObject {
 		this.context = context;
 	}
 	
-	public Question(Context context, long id, String questionText, String questionTitle, String askedDate) {
+	public Question(Context context, String questionText, String questionTitle, String askedDate) {
 		this.context = context;
-		this.id = id;
 		this.questionText = questionText;
 		this.questionTitle = questionTitle;
 		this.askedDate = askedDate;
@@ -64,5 +63,20 @@ public class Question extends PersistableObject {
 	@Override
 	protected Context getContext() {
 		return this.context;
+	}
+
+	@Override
+	protected void setPrimaryKeyColumn(long id) {
+		this.id = id;
+	}
+
+	@Override
+	protected String getNullableColumnName() {
+		return "question_text";
+	}
+
+	@Override
+	protected String getPrimaryKeyColumnName() {
+		return "id";
 	}
 }
