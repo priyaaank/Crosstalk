@@ -18,7 +18,7 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteCursor;
 
-import com.barefoot.crosstalk.models.PersistableObject.PersistableObjectCursor;
+import com.barefoot.crosstalk.components.persistence.PersistableObject.PersistableObjectCursor;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 import com.xtremelabs.robolectric.shadows.ShadowSQLiteCursor;

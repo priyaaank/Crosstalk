@@ -1,10 +1,10 @@
-package com.barefoot.crosstalk.models;
+package com.barefoot.crosstalk.components.persistence;
 
 import static com.barefoot.crosstalk.utils.Utils.basicPluralize;
 import static com.barefoot.crosstalk.utils.Utils.camelCaseToSnakeCase;
+import static com.barefoot.crosstalk.utils.Utils.getterNameFor;
 import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
 import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
-import static com.barefoot.crosstalk.utils.Utils.getterNameFor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +12,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -62,7 +63,7 @@ public abstract class PersistableObject {
 			public void databaseOperation() {
 				getDatabase().getWritableDatabase().beginTransaction();
 				try {
-					long id = getDatabase().getWritableDatabase().insertOrThrow(getTableName(),getNullableColumnName(), dbValues);
+					long id = getDatabase().getWritableDatabase().insertOrThrow(getTableName(), camelCaseToSnakeCase(getNullableFieldName()), dbValues);
 					PersistableObject.this.setPrimaryKeyColumn(id);
 					getDatabase().getWritableDatabase().setTransactionSuccessful();
 				} catch(SQLException sqle) {
@@ -76,11 +77,13 @@ public abstract class PersistableObject {
 		return 0;
 	}
 
-	public long update() {
-		return 0;
+	public void update() {
+		//TODO - Implement when needed
 	}
 	
-	public abstract void delete();
+	public void delete() {
+		//TODO - Implement when needed
+	}
 	
 	protected Criteria<PersistableObject> getCriteriaInstance() {
 		return new Criteria<PersistableObject>(this);
@@ -229,7 +232,7 @@ public abstract class PersistableObject {
 		
 		for(String fieldName : fieldNames) {
 			try {
-				if(fieldName.equalsIgnoreCase(getPrimaryKeyColumnName()))
+				if(fieldName.equalsIgnoreCase(camelCaseToSnakeCase(getPrimaryKeyFieldName())))
 					continue;
 				
 				classDefinition = Class.forName(this.getClass().getName());
@@ -252,8 +255,8 @@ public abstract class PersistableObject {
 	
 	abstract protected void setPrimaryKeyColumn(long id);
 	
-	abstract protected String getNullableColumnName();
+	abstract protected String getNullableFieldName();
 	
-	abstract protected String getPrimaryKeyColumnName();
+	abstract protected String getPrimaryKeyFieldName();
 
 }

@@ -19,10 +19,6 @@ public class AskQuestion extends Activity {
 		setContentView(R.layout.ask_question);
 		setComponentListeners();
 		
-		new Question(this, "wooo hooo","whatebr you need man!!", "23/3/2222").create();
-//		Log.i(LOG_TAG, "FOUND QUESTION WITH ID"+ object.getId() +" AND TEXT" + object.getQuestionText());
-		
-
 	}
 	
 	private void setComponentListeners() {

@@ -1,4 +1,4 @@
-package com.barefoot.crosstalk.models;
+package com.barefoot.crosstalk.components.persistence;
 
 import android.content.Context;
 import android.database.SQLException;

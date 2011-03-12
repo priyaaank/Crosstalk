@@ -5,6 +5,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.barefoot.crosstalk.components.persistence.Criteria;
+
 public class CriteriaTest {
 	
 	private Criteria<Question> testCriteria;

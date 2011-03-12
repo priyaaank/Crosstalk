@@ -1,5 +1,7 @@
 package com.barefoot.crosstalk.models;
 
+import com.barefoot.crosstalk.components.persistence.PersistableObject;
+
 import android.content.Context;
 
 
@@ -56,11 +58,6 @@ public class Question extends PersistableObject {
 	}
 
 	@Override
-	public void delete() {
-		
-	}
-
-	@Override
 	protected Context getContext() {
 		return this.context;
 	}
@@ -71,12 +68,12 @@ public class Question extends PersistableObject {
 	}
 
 	@Override
-	protected String getNullableColumnName() {
-		return "question_text";
+	protected String getNullableFieldName() {
+		return "questionText";
 	}
 
 	@Override
-	protected String getPrimaryKeyColumnName() {
+	protected String getPrimaryKeyFieldName() {
 		return "id";
 	}
 }
