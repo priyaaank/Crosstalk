@@ -1,4 +1,4 @@
-package com.barefoot.crosstalk.models;
+package com.barefoot.crosstalk.components.persistence;
 
 import junit.framework.Assert;
 
@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.barefoot.crosstalk.components.persistence.Criteria;
+import com.barefoot.crosstalk.models.Question;
 
 public class CriteriaTest {
 	
@@ -21,7 +22,7 @@ public class CriteriaTest {
 	@Test
 	public void testGenerationOfSimpleSelectQuery() {
 		final StringBuffer SELECTION_QUERY = new StringBuffer();
-		SELECTION_QUERY.append("select id, questiontext, questiontitle, askeddate from question t0 where ")
+		SELECTION_QUERY.append("select id, questiontext, questiontitle, askeddate from questions t0 where ")
 					   .append("id = '1' and ")
 					   .append("askeddate in ('01/01/2010', '02/02/2010', '03/03/2010') and ")
 					   .append("questiontitle = 'random question title' ")
@@ -40,7 +41,7 @@ public class CriteriaTest {
 	@Test
 	public void testGenerationOfBasicSelectQuery() {
 		final StringBuffer SELECTION_QUERY = new StringBuffer();
-		SELECTION_QUERY.append("select *  from question t0 where ")
+		SELECTION_QUERY.append("select *  from questions t0 where ")
 					   .append("id = '1'  ");
 		
 		testCriteria.where("id", "1");
@@ -51,10 +52,10 @@ public class CriteriaTest {
 	@Test
 	public void testGenerationOfSelectQueryWithParamsArray() {
 		final StringBuffer SELECTION_QUERY = new StringBuffer();
-		SELECTION_QUERY.append("where ")
+		SELECTION_QUERY.append("select id, questiontext, questiontitle, askeddate from questions t0 where ")
 					   .append("id = ? and ")
 					   .append("askeddate in (?,?,?) and ")
-					   .append("questiontitle = ?");
+					   .append("questiontitle = ? order by questiontext, questiontitle asc, askeddate desc ");
 		String[] params = new String[] {"1","01/01/2010","02/02/2010","03/03/2010",
 										"random question title"};
 		

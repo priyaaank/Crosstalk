@@ -5,7 +5,8 @@ import java.util.List;
 public class Utils {
 	
 	public static boolean isNotNullAndEmpty(List<?> listOfObjects) {
-		return (listOfObjects != null & listOfObjects.size() > 0);
+		
+		return (listOfObjects != null && listOfObjects.size() > 0);
 	}
 	
 	public static String basicPluralize(String singularWord) {
