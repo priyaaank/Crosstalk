@@ -57,16 +57,6 @@ public class Question extends PersistableObject {
 	}
 
 	@Override
-	public void create() {
-		
-	}
-
-	@Override
-	public void update() {
-		
-	}
-
-	@Override
 	public void delete() {
 		
 	}

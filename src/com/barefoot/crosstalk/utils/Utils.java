@@ -13,17 +13,24 @@ public class Utils {
 	}
 	
 	public static String setterNameFor(String attributeName) {
-		String[] splittedName = null;
 		StringBuffer setterName = new StringBuffer("set");
 		if (null != attributeName) {
-			splittedName = attributeName.split("_");
-			for(String eachWord : splittedName) {
-				setterName.append(capitalizeFirstLetter(eachWord));
-			}
-			
- 			return setterName.toString();
+			return setterName.append(snakeCaseToCamelCase(attributeName)).toString();
 		}
 		return null;
+	}
+	
+	public static String snakeCaseToCamelCase(String word) {
+		if (word == null)
+			return null;
+		
+		StringBuffer camelCaseWord = new StringBuffer("");
+		String[] splittedName = word.split("_");
+		for(String eachWord : splittedName) {
+			camelCaseWord.append(capitalizeFirstLetter(eachWord));
+		}
+		
+		return camelCaseWord.toString();
 	}
 	
 	public static String camelCaseToSnakeCase(String word) {

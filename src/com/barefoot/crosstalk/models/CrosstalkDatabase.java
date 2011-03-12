@@ -21,6 +21,11 @@ public class CrosstalkDatabase extends SQLiteOpenHelper {
 	}
 	
 	@Override
+	public void finalize() {
+		super.close();
+	}
+	
+	@Override
 	public void onCreate(SQLiteDatabase db) {
 		Log.e(LOG_TAG, "Creating Crosstalk database for first time");
 		String[] creationSqls = context.getString(R.string.create_database_sqls).split(";");

@@ -6,10 +6,10 @@ import static com.barefoot.crosstalk.utils.Utils.isNotNullAndEmpty;
 import static com.barefoot.crosstalk.utils.Utils.setterNameFor;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
@@ -39,9 +39,13 @@ public abstract class PersistableObject {
 		return false;
 	}
 	
-	public abstract void create();
+	public long create() {
+		return 0;
+	}
 	
-	public abstract void update();
+	public long update() {
+		return 0;
+	}
 	
 	public abstract void delete();
 	
@@ -49,28 +53,33 @@ public abstract class PersistableObject {
 		return new Criteria<PersistableObject>(this);
 	}
 	
-	protected List<PersistableObject> findAllForGiven(Criteria<PersistableObject> criteria) {
-		Cursor persistableObjectReview = null;
-		List<PersistableObject> objectList = new ArrayList<PersistableObject>();
+	protected List<PersistableObject> findAllForGiven(final Criteria<PersistableObject> criteria) {
+		final List<PersistableObject> objectList = new ArrayList<PersistableObject>();
 		
-		try {
-			persistableObjectReview = new CrosstalkDatabase(getContext()).getReadableDatabase().rawQueryWithFactory(getCursorFactory(), 
-																							  						criteria.escapedSelectionQuery(), 
-																							  						criteria.selectionQueryParamsArray(), 
-																							  						null);
-			if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
-				do {
-					objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(this, getContext()));
-				} while(persistableObjectReview.moveToNext());
+		(new QueryExecutor(getContext()) {
+			@Override
+			public void databaseOperation() {
+				Cursor persistableObjectReview = null;
+				
+				try {
+					persistableObjectReview = getDatabase().getReadableDatabase().rawQueryWithFactory(getCursorFactory(), 
+																									  criteria.escapedSelectionQuery(), 
+																									  criteria.selectionQueryParamsArray(), 
+																									  null);
+					if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
+						do {
+							objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(PersistableObject.this, getContext(), getFieldNamesForObject()));
+						} while(persistableObjectReview.moveToNext());
+					}
+				} catch(SQLException sqle) {
+					Log.e(LOG_TAG, "SQL exception thrown:" + sqle.getMessage());
+				} finally {
+					if(persistableObjectReview != null && !persistableObjectReview.isClosed()) {
+						persistableObjectReview.close();
+					}
+				}
 			}
-			
-		} catch(SQLException sqle) {
-			Log.e(LOG_TAG, "SQL exception thrown:" + sqle.getMessage());
-		} finally {
-			if(persistableObjectReview != null && !persistableObjectReview.isClosed()) {
-				persistableObjectReview.close();
-			}
-		}
+		}).execute();
 		
 		return objectList;
 	}
@@ -97,7 +106,7 @@ public abstract class PersistableObject {
 			}
 		}
 		
-		public PersistableObject getModelObject(PersistableObject subClassObject, Context context) {
+		public PersistableObject getModelObject(PersistableObject subClassObject, Context context, List<String> fieldNames) {
 			PersistableObject convertedObject = null;
 			try {
 				Class<?> classDefinition = Class.forName(subClassObject.getClass().getName());
@@ -110,6 +119,10 @@ public abstract class PersistableObject {
 				String fieldSetterName;
 				Method currentMethod;
 				for(Field eachField : classDefinition.getDeclaredFields()) {
+					
+					if (!(fieldNames.contains(camelCaseToSnakeCase(eachField.getName()))))
+						continue;
+					
 					modifiers = eachField.getModifiers();
 					fieldName = eachField.getName();
 					fieldSetterName = setterNameFor(fieldName);
@@ -117,33 +130,14 @@ public abstract class PersistableObject {
 						try {
 							currentMethod = classDefinition.getMethod(fieldSetterName, new Class[] {eachField.getType()});
 							currentMethod.invoke(convertedObject, new Object[]{getDatabaseValue(eachField)});
-						} catch (SecurityException e) {
-							Log.e(LOG_TAG, e.getMessage());
-						} catch (NoSuchMethodException e) {
-							Log.e(LOG_TAG, e.getMessage());
-						} catch (IllegalArgumentException e) {
-							Log.e(LOG_TAG, e.getMessage());
-						} catch (InvocationTargetException e) {
+						} catch (Exception e) {
 							Log.e(LOG_TAG, e.getMessage());
 						}
 					}
 				}
-			} catch (ClassNotFoundException e) {
+			} catch (Exception e) {
 				Log.e(LOG_TAG, e.getMessage());
-			} catch (NoSuchMethodException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			} catch (IllegalAccessException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			} catch (InstantiationException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			} catch (IllegalArgumentException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			} catch (SecurityException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			} catch (InvocationTargetException e) {
-				Log.e(LOG_TAG, e.getMessage());
-			}
-			
+			} 
 			return convertedObject;
 		}
 		
@@ -169,5 +163,30 @@ public abstract class PersistableObject {
 		}
 	}
 	
+	protected List<String> getFieldNamesForObject() {
+		final List<String> columnNames = new ArrayList<String>();
+		(new QueryExecutor(getContext()) {
+			@Override
+			public void databaseOperation() {
+				Cursor query = null;
+				try {
+					query = getDatabase().getReadableDatabase().query(getTableName(), null,"1=1 limit 1", null,null, null, null);
+					String[] columnNamesArray = query.getColumnNames();
+					columnNames.addAll(Arrays.asList(columnNamesArray));	
+				} catch(SQLException sqle) {
+					Log.e(LOG_TAG, sqle.getMessage());
+				} finally {
+					if(query != null && !query.isClosed()) {
+						query.close();
+					}
+				}
+			}
+		}).execute();
+		
+		
+		return columnNames;
+	}
+	
 	abstract protected Context getContext();
+
 }

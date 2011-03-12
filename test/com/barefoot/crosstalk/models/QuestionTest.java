@@ -80,7 +80,7 @@ public class QuestionTest {
 		}
 
 		shadowCursor.setResultSet(mockResultSet);
-		Question modelObject = (Question)((PersistableObjectCursor)newCursor).getModelObject(testQuestion, null);
+		Question modelObject = (Question)((PersistableObjectCursor)newCursor).getModelObject(testQuestion, null, null);
 		
 		assertNotNull(modelObject);
 	}
