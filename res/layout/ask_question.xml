@@ -17,13 +17,28 @@
 	<EditText	android:id="@+id/ask_question_box"
 			  	android:layout_width="fill_parent"
 			  	android:layout_height="140dip"/>
+			  	
+	<ImageView  android:id="@+id/image_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/>
+				
 	<LinearLayout	android:id="@+id/ask_question_button_wrapper"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
+					android:orientation="vertical"
 					android:gravity="center_horizontal">
 		<Button	android:id="@+id/ask_question_submit_button"
 				android:text="Ask!"
 				android:layout_height="wrap_content"
 				android:layout_width="200dip"/>					
+		<Button	android:id="@+id/ask_question_take_picture"
+				android:text="Take Picture!"
+				android:layout_height="wrap_content"
+				android:layout_width="200dip"/>
+		<Button	android:id="@+id/ask_question_map"
+				android:text="Map!"
+				android:layout_height="wrap_content"
+				android:layout_width="200dip"/>			
 	</LinearLayout>
 </LinearLayout>

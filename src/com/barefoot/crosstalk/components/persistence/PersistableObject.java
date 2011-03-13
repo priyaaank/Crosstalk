@@ -11,8 +11,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -55,7 +56,7 @@ public abstract class PersistableObject {
 	}
 	
 	public long create() {
-		List<String> fieldNamesForObject = getFieldNamesForObject();
+		List<String> fieldNamesForObject = getFieldNames();
 		final ContentValues dbValues = getContentValuesForCurrentObject(fieldNamesForObject);
 		
 		(new QueryExecutor(getContext()) {
@@ -104,7 +105,7 @@ public abstract class PersistableObject {
 																									  null);
 					if(persistableObjectReview != null && persistableObjectReview.moveToFirst()) {
 						do {
-							objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(PersistableObject.this, getContext(), getFieldNamesForObject()));
+							objectList.add(((PersistableObjectCursor)persistableObjectReview).getModelObject(PersistableObject.this, getContext(), getFieldNames()));
 						} while(persistableObjectReview.moveToNext());
 					}
 				} catch(SQLException sqle) {
@@ -199,7 +200,7 @@ public abstract class PersistableObject {
 		}
 	}
 	
-	protected List<String> getFieldNamesForObject() {
+	public List<String> getFieldNames() {
 		final List<String> columnNames = new ArrayList<String>();
 		(new QueryExecutor(getContext()) {
 			@Override
@@ -223,14 +224,23 @@ public abstract class PersistableObject {
 		return columnNames;
 	}
 
-
-	protected ContentValues getContentValuesForCurrentObject(List<String> fieldNames) {
+	private ContentValues getContentValuesForCurrentObject(List<String> fieldNames) {
+		ContentValues contentValues = new ContentValues();
+		Map<String, String> attributeMap = getAttributeMap();
+		for(String eachKey : attributeMap.keySet()) {
+			contentValues.put(eachKey, attributeMap.get(eachKey));
+		}
+				
+		return contentValues;
+	}
+	
+	public Map<String, String> getAttributeMap() {
 		Class<?> classDefinition = null;
 		Method currentMethod = null;
 		String value = null;
-		ContentValues contentValues = new ContentValues();
+		Map<String, String> attributeMap = new HashMap<String, String>();
 		
-		for(String fieldName : fieldNames) {
+		for(String fieldName : getFieldNames()) {
 			try {
 				if(fieldName.equalsIgnoreCase(camelCaseToSnakeCase(getPrimaryKeyFieldName())))
 					continue;
@@ -242,13 +252,12 @@ public abstract class PersistableObject {
 					continue;
 						
 				value = String.valueOf(currentMethod.invoke(this, null));
-				contentValues.put(fieldName, value);
+				attributeMap.put(fieldName, value);
 			} catch (Exception e) {
 				Log.e(LOG_TAG, e.getMessage());
 			}
 		}
-		
-		return contentValues;
+		return attributeMap;
 	}
 	
 	abstract protected Context getContext();
