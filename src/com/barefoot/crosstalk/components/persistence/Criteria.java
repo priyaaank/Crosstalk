@@ -131,7 +131,7 @@ public class Criteria<T extends PersistableObject> {
 	
 	public String escapedSelectionQuery() {
 		if(whereOptions == null || whereOptions.size() == 0)
-			return null;
+			return selectionQuery();
 		
 		StringBuffer query = new StringBuffer(getSelect()).append(" ");
 		query.append(getFromClause()).append(" ");

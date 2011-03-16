@@ -39,8 +39,7 @@ public abstract class QueryExecutor {
 		try {
 			databaseOperation();
 		} catch(Exception e) {
-			Log.e(LOG_TAG, e.getMessage());
-			
+			Log.e(LOG_TAG, e.getMessage());			
 		}
 		closeDatabase();
 	}	

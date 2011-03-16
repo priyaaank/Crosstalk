@@ -1,8 +1,12 @@
 package com.barefoot.crosstalk.models;
 
-import com.barefoot.crosstalk.components.persistence.PersistableObject;
 
 import android.content.Context;
+import android.text.format.Time;
+
+import com.barefoot.crosstalk.R;
+import com.barefoot.crosstalk.components.persistence.PersistableObject;
+import com.barefoot.crosstalk.components.webserviceops.RemoteServiceWrapper;
 
 
 public class Question extends PersistableObject {
@@ -11,11 +15,14 @@ public class Question extends PersistableObject {
 	private String questionText;
 	private String questionTitle;
 	private String askedDate;
+	private RemoteServiceWrapper remoteServiceWrapper;
 
 	private Context context;
+	private static String localtimezone = new Time().timezone;
 	
 	public Question(Context context) {
 		this.context = context;
+		this.remoteServiceWrapper = new RemoteServiceWrapper(context.getString(R.string.base_remote_url));
 	}
 	
 	public Question(Context context, String questionText, String questionTitle, String askedDate) {
@@ -23,6 +30,7 @@ public class Question extends PersistableObject {
 		this.questionText = questionText;
 		this.questionTitle = questionTitle;
 		this.askedDate = askedDate;
+		this.remoteServiceWrapper = new RemoteServiceWrapper(context.getString(R.string.base_remote_url));
 	}
 	
 	public long getId() {
@@ -55,6 +63,17 @@ public class Question extends PersistableObject {
 
 	public void setAskedDate(String askedDate) {
 		this.askedDate = askedDate;
+	}	
+	
+	public String getAskedDateInLocalTimezone() {
+		if(getAskedDate() != null) {
+			Time newTime = new Time("UTC");
+			newTime.switchTimezone(localtimezone);
+			newTime.parse3339(getAskedDate());
+			return  newTime.format("%d-%b-%Y");
+		}
+		
+		return "";
 	}
 
 	@Override
@@ -75,5 +94,9 @@ public class Question extends PersistableObject {
 	@Override
 	protected String getPrimaryKeyFieldName() {
 		return "id";
+	}
+	
+	public void submitToService() {
+		remoteServiceWrapper.postToRemoteService(context.getString(R.string.question_submit_url), getAttributeMap());
 	}
 }

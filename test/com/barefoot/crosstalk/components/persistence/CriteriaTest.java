@@ -4,18 +4,28 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import com.barefoot.crosstalk.components.persistence.Criteria;
+import android.app.Application;
+import android.content.Context;
+
 import com.barefoot.crosstalk.models.Question;
+import com.xtremelabs.robolectric.Robolectric;
+import com.xtremelabs.robolectric.RobolectricTestRunner;
 
+@RunWith(RobolectricTestRunner.class)
 public class CriteriaTest {
 	
 	private Criteria<Question> testCriteria;
 	private Question testQuestionObject;
+	private Application testApplication;
+	private Context context;
 	
 	@Before
 	public void setup() {
-		testQuestionObject = new Question(null);
+		testApplication = Robolectric.application;
+		context = testApplication.getApplicationContext();
+		testQuestionObject = new Question(context);
 		testCriteria = new Criteria<Question>(testQuestionObject);
 	}
 	
@@ -47,6 +57,14 @@ public class CriteriaTest {
 		testCriteria.where("id", "1");
 		
 		Assert.assertEquals(SELECTION_QUERY.toString().toLowerCase(), testCriteria.selectionQuery().toLowerCase());
+	}
+
+	@Test
+	public void testGenerationOfSelectQueryWithoutWhereClause() {
+		final StringBuffer SELECTION_QUERY = new StringBuffer();
+		SELECTION_QUERY.append("select *  from questions t0");
+		
+		Assert.assertEquals(SELECTION_QUERY.toString().toLowerCase().trim(), testCriteria.selectionQuery().toLowerCase().trim());
 	}
 	
 	@Test

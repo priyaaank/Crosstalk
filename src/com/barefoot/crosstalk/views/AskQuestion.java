@@ -13,32 +13,40 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.barefoot.crosstalk.R;
+import com.barefoot.crosstalk.models.Question;
+import com.barefoot.crosstalk.services.QuestionUploadService;
 
 public class AskQuestion extends Activity {
 	
 	protected static final int TAKE_PICTURE = 1;
+	protected static final int GET_LOCATION = 2;
 	public static String LOG_TAG = AskQuestion.class.getName();
 	private Uri imageUri;
 	
 	@Override
 	public void onCreate(Bundle savedInstance) {
 		super.onCreate(savedInstance);
-		
 		setContentView(R.layout.ask_question);
 		setComponentListeners();
-		
 	}
 	
 	private void setComponentListeners() {
 		findViewById(R.id.ask_question_submit_button).setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				
+				(new Thread() {
+					public void run() {
+						String questionText = ((EditText)AskQuestion.this.findViewById(R.id.ask_question_box)).getText().toString();
+						new Question(AskQuestion.this, questionText, questionText, "2011-03-13T18:00:00.000Z").create();
+						QuestionUploadService.acquireStaticLock(AskQuestion.this);
+						startService(new Intent(AskQuestion.this, QuestionUploadService.class));
+					}
+				}).start();
 			}
 		});
 		
@@ -47,7 +55,7 @@ public class AskQuestion extends Activity {
 			@Override
 			public void onClick(View v) {
 				String uri = "geo:"+ 0 + "," + 0 + "?q=kunal+icon+pimple+saudagar+pune";
-				startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)));
+				startActivityForResult(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)), GET_LOCATION);
 			}
 		});
 		
@@ -69,6 +77,9 @@ public class AskQuestion extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    switch (requestCode) {
+	    case GET_LOCATION:
+	    	 Log.i(LOG_TAG, "***********************************************************");
+	    	 break;
 	    case TAKE_PICTURE:
 	        if (resultCode == Activity.RESULT_OK) {
 	            Uri selectedImage = imageUri;

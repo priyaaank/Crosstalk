@@ -51,6 +51,11 @@ public abstract class PersistableObject {
 		return isNotNullAndEmpty(listOfObjects) ? listOfObjects.get(0) : null; 
 	}
 	
+	public List<PersistableObject> findAll() {
+		Criteria<PersistableObject> searchCriteria = getCriteriaInstance();
+		return findAllForGiven(searchCriteria);
+	}
+	
 	public boolean exists(Criteria<PersistableObject> sqlCriteria) {
 		return false;
 	}
