@@ -4,6 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
+    	<uses-library android:name="com.google.android.maps" />
         <activity android:name=".views.AskQuestion"
                   android:label="@string/app_name">
             <intent-filter>
@@ -11,12 +12,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity android:name=".views.LocationSelect" android:label="LocationSelect">
+        </activity>
 
 	   	<service android:name="com.barefoot.crosstalk.services.QuestionUploadService" />
     </application>
     
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
     <uses-sdk android:minSdkVersion="7" />
 

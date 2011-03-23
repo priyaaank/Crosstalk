@@ -42,7 +42,7 @@ public abstract class PersistableObject {
 	private final String LOG_TAG = PersistableObject.class.getName();
 	
 	public String getTableName() {
-		return basicPluralize(this.getClass().getSimpleName().toLowerCase());
+		return camelCaseToSnakeCase(basicPluralize(this.getClass().getSimpleName().toLowerCase()));
 	}
 	
 	public PersistableObject findById(int id) {
@@ -224,7 +224,6 @@ public abstract class PersistableObject {
 				}
 			}
 		}).execute();
-		
 		
 		return columnNames;
 	}

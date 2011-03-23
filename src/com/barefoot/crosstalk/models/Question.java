@@ -15,9 +15,11 @@ public class Question extends PersistableObject {
 	private String questionText;
 	private String questionTitle;
 	private String askedDate;
-	private RemoteServiceWrapper remoteServiceWrapper;
-
+	private String latitude;
+	private String longitude;
 	private Context context;
+	private RemoteServiceWrapper remoteServiceWrapper;
+	
 	private static String localtimezone = new Time().timezone;
 	
 	public Question(Context context) {
@@ -25,11 +27,14 @@ public class Question extends PersistableObject {
 		this.remoteServiceWrapper = new RemoteServiceWrapper(context.getString(R.string.base_remote_url));
 	}
 	
-	public Question(Context context, String questionText, String questionTitle, String askedDate) {
+	public Question(Context context, String questionText, String questionTitle, 
+					String askedDate, String latitude, String longitude) {
 		this.context = context;
 		this.questionText = questionText;
 		this.questionTitle = questionTitle;
 		this.askedDate = askedDate;
+		this.longitude = longitude;
+		this.latitude = latitude;
 		this.remoteServiceWrapper = new RemoteServiceWrapper(context.getString(R.string.base_remote_url));
 	}
 	
@@ -74,6 +79,22 @@ public class Question extends PersistableObject {
 		}
 		
 		return "";
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
 	}
 
 	@Override

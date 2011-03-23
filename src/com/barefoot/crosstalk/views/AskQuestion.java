@@ -42,7 +42,7 @@ public class AskQuestion extends Activity {
 				(new Thread() {
 					public void run() {
 						String questionText = ((EditText)AskQuestion.this.findViewById(R.id.ask_question_box)).getText().toString();
-						new Question(AskQuestion.this, questionText, questionText, "2011-03-13T18:00:00.000Z").create();
+						new Question(AskQuestion.this, questionText, questionText, "2011-03-13T18:00:00.000Z", null, null).create();
 						QuestionUploadService.acquireStaticLock(AskQuestion.this);
 						startService(new Intent(AskQuestion.this, QuestionUploadService.class));
 					}
@@ -54,8 +54,7 @@ public class AskQuestion extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				String uri = "geo:"+ 0 + "," + 0 + "?q=kunal+icon+pimple+saudagar+pune";
-				startActivityForResult(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)), GET_LOCATION);
+				startAct();
 			}
 		});
 		
@@ -73,12 +72,16 @@ public class AskQuestion extends Activity {
 		});
 	}
 	
+	private void startAct() {
+		Intent intent = new Intent(this, LocationSelect.class);
+		startActivity(intent);
+	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    switch (requestCode) {
 	    case GET_LOCATION:
-	    	 Log.i(LOG_TAG, "***********************************************************");
 	    	 break;
 	    case TAKE_PICTURE:
 	        if (resultCode == Activity.RESULT_OK) {
