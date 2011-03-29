@@ -1,15 +1,18 @@
 package com.barefoot.crosstalk.components.location;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
+
+import com.google.android.maps.GeoPoint;
 
 public class LocationHelper {
 	
 	private LocationManager locationManager;
 	
-	public LocationHelper(LocationManager locationManager) {
-		this.locationManager = locationManager;
+	public LocationHelper(Context context) {
+		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 	}
 	
 	public Location getBestLastKnownLocation() {
@@ -37,6 +40,18 @@ public class LocationHelper {
         }
         
         return null;
+	}
+	
+	public GeoPoint getBestLastKnownGeoPoint() {
+		Location lastKnownLocation = getBestLastKnownLocation();
+		if(lastKnownLocation != null) {
+			Double longitudeE6 = new Double (lastKnownLocation.getLongitude() * 10E5);
+			Double latitudeE6 = new Double (lastKnownLocation.getLatitude() * 10E5);
+			Log.i(this.getClass().getName(), "Returning last known geopoint with cordinates as : Latitude/Longitude[" + latitudeE6+"/"+longitudeE6+"]" );
+			return new GeoPoint(latitudeE6.intValue(), longitudeE6.intValue());
+		}
+		
+		return null;
 	}
 	
 	public boolean isGPSSupported() {

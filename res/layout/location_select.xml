@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/location_select_layout"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-		<com.google.android.maps.MapView
-		    xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:id="@+id/location_select_map"
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:clickable="true"
-		    android:apiKey="02OpXQTgY3xN8KpsdaDHGru6HbK8fd7vJRsMhXg"/>
+    			android:id="@+id/location_select_layout"
+    			android:layout_width="fill_parent"
+    			android:layout_height="fill_parent" >
+    			
+				<com.google.android.maps.MapView	android:id="@+id/location_select_map"
+				    								android:layout_width="fill_parent"
+				    								android:layout_height="fill_parent"
+				    								android:clickable="true"
+				    								android:apiKey="02OpXQTgY3xN8KpsdaDHGru6HbK8fd7vJRsMhXg"
+				/>
+				    								
+				<ImageView 							android:id="@+id/drag"
+													android:layout_height="wrap_content"
+													android:layout_width="wrap_content"
+													android:visibility="gone"
+													android:src="@drawable/marker"
+				/>
+				
+				<ImageButton						android:id="@+id/location_select_map_toggle_button"
+													android:layout_height="30dip"
+													android:layout_width="30dip"
+													android:src="@drawable/toggle_button" 
+													android:layout_alignParentBottom ="true"
+													android:layout_alignParentRight = "true"
+													android:layout_marginRight="10dip"
+													android:layout_marginBottom="10dip"/>
 </RelativeLayout>

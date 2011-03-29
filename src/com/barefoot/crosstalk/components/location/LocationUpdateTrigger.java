@@ -29,7 +29,7 @@ public class LocationUpdateTrigger {
 
 	public LocationUpdateTrigger(Context context, long timetoWaitForRealTimeUpdate, LocationResultExecutor resultExecutor) {
 		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-		this.locationHelper = new LocationHelper(locationManager);
+		this.locationHelper = new LocationHelper(context);
 		this.timetoWaitForRealTimeUpdate = timetoWaitForRealTimeUpdate;
 		this.locationResult = resultExecutor;
 		Log.d("LocationUpdateTrigger", "We'll wait for "+ timetoWaitForRealTimeUpdate + "milliseconds before we go with the last known location");
@@ -104,7 +104,7 @@ public class LocationUpdateTrigger {
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsLocationListener);
 		}
 		
-		if(gpsSupported) {
+		if(networkSupported) {
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, networkLocationListener);
 		}
 		
