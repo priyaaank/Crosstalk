@@ -74,7 +74,7 @@ public class AskQuestion extends Activity {
 	
 	private void startAct() {
 		Intent intent = new Intent(this, LocationSelect.class);
-		startActivity(intent);
+		startActivityForResult(intent, GET_LOCATION);
 	}
 	
 	@Override

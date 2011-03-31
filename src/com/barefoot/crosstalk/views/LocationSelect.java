@@ -3,10 +3,12 @@ package com.barefoot.crosstalk.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +29,7 @@ public class LocationSelect extends MapActivity {
 	private MapView map;
 	private GeoPoint myLastKnownLocation;
 	private SitesOverlay sitesOverlay;
+	private GeoPoint currentPinGeoLocation;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,23 @@ public class LocationSelect extends MapActivity {
 	protected boolean isRouteDisplayed() {
 		return(false);
 	}
+ 	
+ 	@Override
+ 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+ 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+ 			if(currentPinGeoLocation != null) {
+	 			Intent data = new Intent();
+	 			data.putExtra("latitude", currentPinGeoLocation.getLatitudeE6());
+	 			data.putExtra("longitude", currentPinGeoLocation.getLongitudeE6());
+		        setResult(RESULT_OK, data);
+	        } else {
+	        	setResult(RESULT_CANCELED);
+	        }
+ 			finish();
+ 			return true;
+	      }
+	      return super.onKeyDown(keyCode, event);
+ 	}
 
 	private class SitesOverlay extends ItemizedOverlay<OverlayItem> {
 		private List<OverlayItem> items=new ArrayList<OverlayItem>();
@@ -98,8 +118,10 @@ public class LocationSelect extends MapActivity {
 		
 		protected void togglePin() {
 			if(size() == 0 && inDrag == null) {
+				currentPinGeoLocation = map.getMapCenter();
 				items.add(new OverlayItem(map.getMapCenter(),"Selector", "Select Location"));				
 			} else if(items.size() > 0 && inDrag == null)  {
+				currentPinGeoLocation = null;
 				items.clear();
 			}
 			
@@ -172,8 +194,8 @@ public class LocationSelect extends MapActivity {
 		private void swapDragImageWithDroppedItem(int x, int y) {
 			dragImage.setVisibility(View.GONE);
 
-			GeoPoint pt=map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
-			OverlayItem toDrop=new OverlayItem(pt, inDrag.getTitle(),inDrag.getSnippet());
+			currentPinGeoLocation = map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
+			OverlayItem toDrop=new OverlayItem(currentPinGeoLocation, inDrag.getTitle(),inDrag.getSnippet());
 			items.clear();
 			items.add(toDrop);
 			populate();
