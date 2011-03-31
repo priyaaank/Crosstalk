@@ -29,14 +29,16 @@ public class LocationSelect extends MapActivity {
 	private MapView map;
 	private GeoPoint myLastKnownLocation;
 	private SitesOverlay sitesOverlay;
+	
 	private GeoPoint currentPinGeoLocation;
+	private int currentZoomLevel;
+	private int resultStatus = RESULT_CANCELED;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.location_select);
 		map = (MapView)findViewById(R.id.location_select_map);
-		
 		
 		myLastKnownLocation = new LocationHelper(getApplicationContext()).getBestLastKnownGeoPoint();
 		zoomIfLocationPresent(myLastKnownLocation, map);
@@ -81,18 +83,30 @@ public class LocationSelect extends MapActivity {
  	@Override
  	public boolean onKeyDown(int keyCode, KeyEvent event) {
  		if (keyCode == KeyEvent.KEYCODE_BACK) {
- 			if(currentPinGeoLocation != null) {
-	 			Intent data = new Intent();
+ 			Intent data = null;
+ 			if(resultStatus == RESULT_OK) {
+	 			data = new Intent();
 	 			data.putExtra("latitude", currentPinGeoLocation.getLatitudeE6());
 	 			data.putExtra("longitude", currentPinGeoLocation.getLongitudeE6());
-		        setResult(RESULT_OK, data);
-	        } else {
-	        	setResult(RESULT_CANCELED);
+	 			data.putExtra("zoom_level", currentZoomLevel);
 	        }
+ 			setResult(resultStatus, data);
  			finish();
  			return true;
 	      }
 	      return super.onKeyDown(keyCode, event);
+ 	}
+ 	
+ 	private void updateResult(GeoPoint geopoint) {
+ 		currentPinGeoLocation = geopoint;
+ 		currentZoomLevel = map.getZoomLevel();
+ 		resultStatus = RESULT_OK;
+ 	}
+ 	
+ 	private void resetResult() {
+ 		currentPinGeoLocation = null;
+ 		currentZoomLevel = 0;
+ 		resultStatus = RESULT_CANCELED;
  	}
 
 	private class SitesOverlay extends ItemizedOverlay<OverlayItem> {
@@ -118,10 +132,10 @@ public class LocationSelect extends MapActivity {
 		
 		protected void togglePin() {
 			if(size() == 0 && inDrag == null) {
-				currentPinGeoLocation = map.getMapCenter();
+				updateResult(map.getMapCenter());
 				items.add(new OverlayItem(map.getMapCenter(),"Selector", "Select Location"));				
 			} else if(items.size() > 0 && inDrag == null)  {
-				currentPinGeoLocation = null;
+				resetResult();
 				items.clear();
 			}
 			
@@ -186,6 +200,8 @@ public class LocationSelect extends MapActivity {
 
 				xDragTouchOffset=x-p.x;
 				yDragTouchOffset=y-p.y;
+				
+				resetResult();
 				return true;
 			}
 			return false;
@@ -194,8 +210,9 @@ public class LocationSelect extends MapActivity {
 		private void swapDragImageWithDroppedItem(int x, int y) {
 			dragImage.setVisibility(View.GONE);
 
-			currentPinGeoLocation = map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
-			OverlayItem toDrop=new OverlayItem(currentPinGeoLocation, inDrag.getTitle(),inDrag.getSnippet());
+			GeoPoint geoPoint = map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
+			updateResult(geoPoint);
+			OverlayItem toDrop=new OverlayItem(geoPoint, inDrag.getTitle(),inDrag.getSnippet());
 			items.clear();
 			items.add(toDrop);
 			populate();
