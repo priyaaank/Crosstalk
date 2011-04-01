@@ -1,4 +1,4 @@
-package com.barefoot.crosstalk.views;
+package com.barefoot.crosstalk.views.locationselect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.barefoot.crosstalk.R;
 import com.barefoot.crosstalk.components.location.LocationHelper;
@@ -57,7 +56,7 @@ public class LocationSelect extends MapActivity {
 		toggleButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sitesOverlay.togglePin();
+				sitesOverlay.togglePinVisbility();
 			}
 		});
 	}
@@ -110,30 +109,24 @@ public class LocationSelect extends MapActivity {
  	}
 
 	private class SitesOverlay extends ItemizedOverlay<OverlayItem> {
-		private List<OverlayItem> items=new ArrayList<OverlayItem>();
+		private List<LocationPin> items=new ArrayList<LocationPin>();
 		private Drawable marker=null;
-		private OverlayItem inDrag=null;
+		private LocationPin inDrag=null;
 		private ImageView dragImage=null;
-		private int xDragImageOffset=0;
-		private int yDragImageOffset=0;
-		private int xDragTouchOffset=0;
-		private int yDragTouchOffset=0;
 
 		public SitesOverlay(Drawable marker) {
 			super(marker);
 			this.marker=marker;
 
 			dragImage=(ImageView)findViewById(R.id.drag);
-			xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
-			yDragImageOffset=dragImage.getDrawable().getIntrinsicHeight();
 			
 			populate();
 		}
 		
-		protected void togglePin() {
+		protected void togglePinVisbility() {
 			if(size() == 0 && inDrag == null) {
 				updateResult(map.getMapCenter());
-				items.add(new OverlayItem(map.getMapCenter(),"Selector", "Select Location"));				
+				items.add(new LocationPin(map.getMapCenter(),"Selector", "Select Location", dragImage));				
 			} else if(items.size() > 0 && inDrag == null)  {
 				resetResult();
 				items.clear();
@@ -168,62 +161,42 @@ public class LocationSelect extends MapActivity {
 	
 				if (action==MotionEvent.ACTION_DOWN) {
 					if(items != null  && items.size() > 0) {
-						result = swapDraggedItemWithDragImage(x, y);		
+						Point p=new Point(0,0);
+						map.getProjection().toPixels(getLocationPin().getPoint(), p);
+						if (hitTest(getLocationPin(), marker, x-p.x, y-p.y)) { 
+							getLocationPin().swapMeWithImpersonater(x, y, map, p);
+							inDrag = getLocationPin();
+							items.remove(getLocationPin());
+							populate();
+							dragImage.setVisibility(View.VISIBLE);
+							resetResult();
+							result = true;
+						}
 					}
 				}
 				else if (action==MotionEvent.ACTION_MOVE && inDrag!=null) {
-					setDragImagePosition(x, y);
+					inDrag.setImpersonaterPosition(x, y);
 					result=true;
 				}
 				else if (action==MotionEvent.ACTION_UP && inDrag!=null) {
-					swapDragImageWithDroppedItem(x, y);
+					items.clear();
+					LocationPin newLocationPin = inDrag.swapImpersonaterWithMe(x, y, map);
+					items.add(newLocationPin);
+					populate();
+					inDrag = null;
+					updateResult(newLocationPin.getPoint());
 					result=true;
 				}
 
 			return(result || super.onTouchEvent(event, mapView));
 		}
-		
-		private boolean swapDraggedItemWithDragImage(int x, int y) {
-			OverlayItem item = items.get(0);
-			Point p=new Point(0,0);
-			map.getProjection().toPixels(item.getPoint(), p);
-			if (hitTest(item, marker, x-p.x, y-p.y)) {
-				inDrag=item;
-				items.remove(inDrag);
-				populate();
 
-				xDragTouchOffset=0;
-				yDragTouchOffset=0;
-
-				setDragImagePosition(p.x, p.y);
-				dragImage.setVisibility(View.VISIBLE);
-
-				xDragTouchOffset=x-p.x;
-				yDragTouchOffset=y-p.y;
-				
-				resetResult();
-				return true;
+		private LocationPin getLocationPin() {
+			if(items.size() > 0) {
+				return items.get(0);
 			}
-			return false;
-		}
-		
-		private void swapDragImageWithDroppedItem(int x, int y) {
-			dragImage.setVisibility(View.GONE);
-
-			GeoPoint geoPoint = map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
-			updateResult(geoPoint);
-			OverlayItem toDrop=new OverlayItem(geoPoint, inDrag.getTitle(),inDrag.getSnippet());
-			items.clear();
-			items.add(toDrop);
-			populate();
-
-			inDrag=null;
-		}
-
-		private void setDragImagePosition(int x, int y) {
-			RelativeLayout.LayoutParams lp= (RelativeLayout.LayoutParams)dragImage.getLayoutParams();
-			lp.setMargins(x-xDragImageOffset-xDragTouchOffset, y-yDragImageOffset-yDragTouchOffset, 0, 0);
-			dragImage.setLayoutParams(lp);
+			
+			return null;
 		}
 	}
 }

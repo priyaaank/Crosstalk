@@ -13,7 +13,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".views.LocationSelect" android:label="LocationSelect">
+        <activity android:name=".views.locationselect.LocationSelect" android:label="LocationSelect">
         </activity>
 
 	   	<service android:name="com.barefoot.crosstalk.services.QuestionUploadService" />

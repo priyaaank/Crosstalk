@@ -20,13 +20,20 @@ import android.widget.Toast;
 import com.barefoot.crosstalk.R;
 import com.barefoot.crosstalk.models.Question;
 import com.barefoot.crosstalk.services.QuestionUploadService;
+import com.barefoot.crosstalk.views.locationselect.LocationSelect;
 
 public class AskQuestion extends Activity {
 	
 	protected static final int TAKE_PICTURE = 1;
 	protected static final int GET_LOCATION = 2;
+	
+	public final static String IMAGES_DIRECTORY = "images";
+	
+	//This should be moved to an application extending class for crosstalk
+	public final static String BASE_APP_DIRECTORY = "crosstalk";
+	
 	public static String LOG_TAG = AskQuestion.class.getName();
-	private Uri imageUri;
+	private static Uri imageUri;
 	
 	@Override
 	public void onCreate(Bundle savedInstance) {
@@ -64,7 +71,7 @@ public class AskQuestion extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-			    File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+			    File photo = new File(Environment.getExternalStorageDirectory()+"/"+BASE_APP_DIRECTORY +"/"+IMAGES_DIRECTORY,  "Pic.jpg");
 			    intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photo));
 			    imageUri = Uri.fromFile(photo);
 			    startActivityForResult(intent, TAKE_PICTURE);
